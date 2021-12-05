@@ -91,9 +91,6 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println(cryptomodel.currency);
                         System.out.println(cryptomodel.price);
                     }// tjek for at se om listen kan ses og dataen er rigtig
-
-
-
                 }
             }
 
@@ -106,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
          */
     }
-
 
     private void handleRespons(List<CryptoModel> cryptoModelList){
         cryptoModels = new ArrayList<>(cryptoModelList);
