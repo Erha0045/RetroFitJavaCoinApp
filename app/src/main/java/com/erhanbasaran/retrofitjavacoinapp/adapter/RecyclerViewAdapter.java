@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,16 +15,20 @@ import com.erhanbasaran.retrofitjavacoinapp.R;
 import com.erhanbasaran.retrofitjavacoinapp.model.CryptoModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowHolder> {
+public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.RowHolder> implements Filterable  {
 
     private ArrayList<CryptoModel> cryptoList;
+    private ArrayList<CryptoModel> cryptoListFull; //kopi af ovenstående
+
 
     //farve hex koder hentet fra color-hex.com
-    private String[] colors= {"#36ea4c","#00f6ff","#c80815","#e678b9","#2eb0fb","#da3287","#fff6a1","#66cdaa"};
+    private String[] colors= {"#36ea4c","#00f6ff","#c80815","#e678b9","#2eb0fb","#da3287","#603a2d","#66cdaa"};
 
     public RecyclerViewAdapter(ArrayList<CryptoModel> cryptoList) {
         this.cryptoList = cryptoList;
+        cryptoListFull = new ArrayList<>(cryptoList);// opretter en  kopi liste som indeholder det samme som den anden men som kan bruges uafhængigt af cryptolist
     }
 
     //layouts og recyclerview forbindelsen skabes
@@ -47,6 +53,41 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public int getItemCount() {
         return cryptoList.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return exampleFilter;
+    }
+
+    private Filter exampleFilter = new Filter() {
+        //kører på background tread
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<CryptoModel> filteredList = new ArrayList<>();
+
+            if (constraint == null || constraint.length() == 0){
+                filteredList.addAll(cryptoListFull);
+            }else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+
+                for (CryptoModel cryptoModel : cryptoListFull){
+                    if (cryptoModel.currency.toLowerCase().contains(filterPattern)){
+                        filteredList.add(cryptoModel);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            cryptoList.clear();
+            cryptoList.addAll((List)results.values);
+            notifyDataSetChanged();
+        }
+    };
 
     public class RowHolder extends RecyclerView.ViewHolder {
         TextView textName;
