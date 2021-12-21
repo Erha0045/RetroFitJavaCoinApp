@@ -68,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
 
         compositeDisposable = new CompositeDisposable();
         compositeDisposable.add(cryptoAPI.getData()
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(this::handleRespons));
+                            .subscribeOn(Schedulers.io())//lad den køre på IO(network DB)treading
+                            .observeOn(AndroidSchedulers.mainThread())//jeg vil observere den i maintread(UI)
+                            .subscribe(this::handleRespons));//handleresponse metoden refereres(startes)
 
 
         /*
